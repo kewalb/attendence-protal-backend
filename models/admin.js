@@ -19,6 +19,9 @@ const adminSchema = new mongoose.Schema({
     required: true
   },
   resetToken: String,
+  activationToken: String,
+  active: Boolean,
+  expireToken: Date,
 });
 
 module.exports = mongoose.model("Admin", adminSchema);

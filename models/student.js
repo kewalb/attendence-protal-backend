@@ -38,7 +38,6 @@ const studentSchema = new mongoose.Schema({
   resetToken: String,
   activationToken: String,
   active: Boolean,
-  activationToken: String,
   expireToken: Date,
 });
 

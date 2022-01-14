@@ -19,8 +19,7 @@ const teacherSchema = new mongoose.Schema({
       required: true
   },
   qualification:{
-    enum: ["B.ed", "M.ed", "Other teaching certification"],
-    required: true
+    enum: ["B.ed", "M.ed", "Other teaching certification"]
   },
   gender:{
     type: String,

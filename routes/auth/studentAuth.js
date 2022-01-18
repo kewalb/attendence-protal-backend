@@ -52,7 +52,7 @@ const mailTransporter = nodemailer.createTransport({
 
 // endpoint for sign up functionality
 router.post("/signup", async (request, response) => {
-  const { name, email, password, role, department, roll } = request.body;
+  const { name, email, password, role, department, roll, gender } = request.body;
   if (!name || !email || !password) {
     return response.json({ message: "Please fill in all the fields" });
   }
@@ -71,6 +71,7 @@ router.post("/signup", async (request, response) => {
         active: false,
         resetString: null,
         activationToken: null,
+        gender:gender,
         resetToken: null,
         expireToken: null,
       });
@@ -130,7 +131,7 @@ router.post("/login", async (request, response) => {
             expiresIn: "1h",
           });
           const { _id, email, name } = user;
-          response.json({ jwtToken, name: name, email: email });
+          response.json({ jwtToken, name: name, email: email, message: "Login Success"});
         } else {
           return response.json({ message: "Invalid Credentials" });
         }
@@ -141,7 +142,7 @@ router.post("/login", async (request, response) => {
 
 // endpoint for forget password functionality
 router.post("/forgot-password", async (request, response) => {
-  const { email } = request.body;
+  const { email, choice } = request.body;
   crypto.randomBytes(32, (error, buffer) => {
     if (error) {
       console.log(error);
@@ -160,7 +161,7 @@ router.post("/forgot-password", async (request, response) => {
           subject: "password reset",
           html: `
                     <p>You requested for password reset</p>
-                    <h5>click in this <a href="http://localhost:3000/reset-password-form/${token}">link</a> to reset password</h5>
+                    <h5>click in this <a href="http://localhost:3000/reset-password-form/${choice}/${token}">link</a> to reset password</h5>
                     `,
         };
         mailTransporter.sendMail(mailDetails, function (error, data) {

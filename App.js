@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/admin', require('./routes/auth/adminAuth'))
+app.use('/admin/dashboard', require('./routes/adminDashboard/adminDashboard'))
 app.use('/student', require('./routes/auth/studentAuth'))
 app.use('/teacher', require('./routes/auth/teacherAuth'))
 

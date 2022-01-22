@@ -1,21 +1,19 @@
 const express = require("express");
 const Teacher = require("../../models/teacher");
 const Student = require("../../models/student");
+const Attendence = require("../../models/attendence");
 
 
 // express router.
 const router = express.Router();
 
-router.get("/count", async (request, response) => {
-  let countTeacher = 0;
-  let countStudent = 0;
-  await Teacher.count()
-    .then((data) => (countTeacher = data))
+router.get("/count/:dept", async (request, response) => {
+    let dept = request.params.dept
+  await Student.count({department:dept})
+    .then((data) => response.json({data}))
     .catch((error) => console.log(error));
-  await Student.count()
-    .then((data) => (countStudent = data))
-    .catch((error) => console.log(error));
-  response.json({ countStudent, countTeacher });
+    // console.log(countStudent)
+//   response.json({ "data": "hi" });
 });
 
 // endpoint to get teacher detail for update purpose
@@ -64,13 +62,15 @@ router.get("/student-detail/:email", async (request, response) => {
 
 // endpoint to update teacher's detail except for password field
 router.put("/update-teacher/:id", async (request, response) => {
-  const { name, email, role, gender, qualification } = request.body;
+  const { name, email, role, gender, qualification, department, description } = request.body;
   const id = request.params.id;
   console.log(id, request.params)
   const updatedData = {
     name,
     email,
     role,
+    description,
+    department,
     gender,
     qualification,
   };
@@ -85,53 +85,47 @@ router.put("/update-teacher/:id", async (request, response) => {
   })
 });
 
-// endpoint to update student's detail except for password field
-router.put("/update-student/:id", async (request, response) => {
-  const { name, email, gender, department, roll } = request.body;
-  const id = request.params.id;
-  console.log(id, request.params)
-  const updatedData = {
-    name,
-    email,
-    role: 'student',
-    department,
-    roll,
-    gender,
-  };
-  await Student.findByIdAndUpdate(id, updatedData, (error, updatedData) => {
-    if(error){
-      response.json({message: "Failed to update"})
-    }
-    else{
-      console.log(updatedData)
-      response.json({message: "Update successful"})
-    }
-  })
-});
-
-
-router.delete("/remove-teacher/:email", (request, response) => {
-  const email = request.params.email
-  Teacher.deleteOne({email}, (error, deletedRecord) => {
-    if(error){
-      response.json({message: "Failed to delete"})
-    }
-    else{
-      response.json({message: "Deleted successfully"})
-    }
-  })
+router.get("/student-detail-batch/:department", (request, response) => {
+    const department = request.params.department;
+    Student.find({department}).then((data) => {
+        response.json({data})
+    }).catch(error => {
+        console.log(error)
+    })
 })
 
-router.delete("/remove-student/:email", (request, response) => {
-  const email = request.params.email
-  Student.deleteOne({email}, (error, deletedRecord) => {
-    if(error){
-      response.json({message: "Failed to delete"})
+router.post("/mark-attendence/:id", async (request, response) => {
+    const id = request.params.id;
+    const {leave, present} = request.body;
+    const date = Date.now()
+    console.log(date)
+    if (present && !leave){
+        Attendence.findOneAndUpdate({studentId: id}, {
+            $inc: {
+                daysAttended: 1
+            },
+            $push: { 
+                graph: {
+                  "date" : Date.now(),
+                  "count" : "P"
+                  }  
+              } 
+        }).then(() => response.json({message: "updated successfully"}))
     }
-    else{
-      response.json({message: "Deleted successfully"})
+    else if(leave && !present){
+        Attendence.findOneAndUpdate({studentId: id}, {
+            $inc: {
+                leave: 1
+            },
+            $push: { 
+                graph: {
+                  "date" : Date.now(),
+                  "count" : "A"
+                  }  
+              } 
+        }).then(() => response.json({message: "updated successfully"}))
     }
-  })
 })
+
 
 module.exports = router;

@@ -10,12 +10,15 @@ const attendenceSchema = mongoose.Schema({
     },
     totalDays:{
         type: Number,
+        default: 0
     },
     daysAttended: {
-        type: Number
+        type: Number,
+        default: 0
     },
     leave:{
-        type: Number
+        type: Number,
+        default: 0
     },
     attendenceByDate:{
         type: Array,

@@ -19,11 +19,19 @@ const teacherSchema = new mongoose.Schema({
       required: true
   },
   qualification:{
-    enum: ["B.ed", "M.ed", "Other teaching certification"]
+    type: String,
+    required: true
   },
   gender:{
     type: String,
     required: true
+  },
+  department:{
+    type: String,
+    required: true
+  },
+  description:{
+    type: String
   },
   resetToken: String,
   activationToken: String,

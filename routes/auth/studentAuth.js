@@ -6,6 +6,7 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const Student = require("../../models/student");
 const { google } = require("googleapis");
+const Attendence = require("../../models/attendence");
 
 // environment variable config.
 require("dotenv").config({ path: "./.env" });
@@ -204,6 +205,10 @@ router.get("/activate/:token", async (request, response) => {
     if (user) {
       (user.active = true), (user.activationToken = null);
       user.save().then(() => {
+        const attendence = new Attendence({
+          studentId: user._id
+        })
+        attendence.save()
         response.json({
           message:
             "Account activated please close this page and login to your account",

@@ -52,7 +52,7 @@ const mailTransporter = nodemailer.createTransport({
 
 // endpoint for sign up functionality
 router.post("/signup", async (request, response) => {
-  const { name, email, password, role, gender, qualification  } = request.body;
+  const { name, email, password, role, gender, qualification, department  } = request.body;
   if (!name || !email || !password || !role || !gender || !qualification) {
     return response.json({ message: "Please fill in all the fields" });
   }
@@ -73,6 +73,7 @@ router.post("/signup", async (request, response) => {
         activationToken: null,
         resetToken: null,
         expireToken: null,
+        department: department
       });
       admin
         .save()

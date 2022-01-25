@@ -100,27 +100,40 @@ router.post("/mark-attendence/:id", async (request, response) => {
     const date = Date.now()
     console.log(date)
     if (present && !leave){
+      const date = new Date()
         Attendence.findOneAndUpdate({studentId: id}, {
             $inc: {
                 daysAttended: 1
             },
             $push: { 
                 attendenceByDate: {
-                  "date" : Date.now(),
+                  "date" : date,
                   "status" : "P"
                   }  
               } 
         }).then(() => response.json({message: "updated successfully"}))
     }
     else if(leave && !present){
+      const date = new Date()
         Attendence.findOneAndUpdate({studentId: id}, {
             $inc: {
                 leave: 1
             },
             $push: { 
-                graph: {
-                  "date" : Date.now(),
-                  "count" : "A"
+                attendenceByDate: {
+                  "date" : date,
+                  "status" : "L"
+                  }  
+              } 
+        }).then(() => response.json({message: "updated successfully"}))
+    }
+    else{
+      const date = new Date()
+        Attendence.findOneAndUpdate({studentId: id}, {
+            $push: { 
+                attendenceByDate: {
+                  "date" : date,
+                  "status" : "A"
                   }  
               } 
         }).then(() => response.json({message: "updated successfully"}))

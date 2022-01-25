@@ -15,3 +15,5 @@ router.get('/attendence-detail/:email', (request, response) => {
         }).catch(error => console.log(error))
     }).catch(error => console.log(error))
 })
+
+module.exports = router;

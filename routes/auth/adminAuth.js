@@ -89,7 +89,7 @@ router.post("/signup", async (request, response) => {
                 subject: "Activate your account.",
                 html: `
                           <p>Click on the below link to activate your account.</p>
-                          <h5>click in this <a href="http://localhost:9000/admin/activate/${token}">link</a> to activate account.</h5>
+                          <h5>click in this <a href="https://attendence-portal.herokuapp.com/admin/activate/${token}">link</a> to activate account.</h5>
                           `,
               };
               mailTransporter.sendMail(mailDetails, function (error, data) {
@@ -158,7 +158,7 @@ router.post("/forgot-password", async (request, response) => {
           subject: "password reset",
           html: `
                     <p>You requested for password reset</p>
-                    <h5>click in this <a href="http://localhost:3000/reset-password-form/${choice}/${token}">link</a> to reset password</h5>
+                    <h5>click in this <a href="https://attendence-portal.herokuapp.com/reset-password-form/${choice}/${token}">link</a> to reset password</h5>
                     `,
         };
         mailTransporter.sendMail(mailDetails, function (error, data) {

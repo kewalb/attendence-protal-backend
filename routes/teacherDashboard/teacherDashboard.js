@@ -105,9 +105,9 @@ router.post("/mark-attendence/:id", async (request, response) => {
                 daysAttended: 1
             },
             $push: { 
-                graph: {
+                attendenceByDate: {
                   "date" : Date.now(),
-                  "count" : "P"
+                  "status" : "P"
                   }  
               } 
         }).then(() => response.json({message: "updated successfully"}))

@@ -162,7 +162,7 @@ router.post("/forgot-password", async (request, response) => {
           subject: "password reset",
           html: `
                     <p>You requested for password reset</p>
-                    <h5>click in this <a href="http://localhost:3000/reset-password-form/${choice}/${token}">link</a> to reset password</h5>
+                    <h5>click in this <a href="https://61f29f73cfbbe600adb64fa1--modest-thompson-231d72.netlify.app/reset-password-form/${choice}/${token}">link</a> to reset password</h5>
                     `,
         };
         mailTransporter.sendMail(mailDetails, function (error, data) {

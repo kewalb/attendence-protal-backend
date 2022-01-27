@@ -3,17 +3,16 @@ const Teacher = require("../../models/teacher");
 const Student = require("../../models/student");
 const Attendence = require("../../models/attendence");
 
-
 // express router.
 const router = express.Router();
 
 router.get("/count/:dept", async (request, response) => {
-    let dept = request.params.dept
-  await Student.count({department:dept})
-    .then((data) => response.json({data}))
+  let dept = request.params.dept;
+  await Student.count({ department: dept })
+    .then((data) => response.json({ data }))
     .catch((error) => console.log(error));
-    // console.log(countStudent)
-//   response.json({ "data": "hi" });
+  // console.log(countStudent)
+  //   response.json({ "data": "hi" });
 });
 
 // endpoint to get teacher detail for update purpose
@@ -32,7 +31,7 @@ router.get("/teacher-detail/:email", async (request, response) => {
   } else {
     await Teacher.find()
       .then((data) => {
-        response.json( data );
+        response.json(data);
       })
       .catch((error) => console.log(error));
   }
@@ -54,7 +53,7 @@ router.get("/student-detail/:email", async (request, response) => {
   } else {
     await Student.find()
       .then((data) => {
-        response.json( data );
+        response.json(data);
       })
       .catch((error) => console.log(error));
   }
@@ -62,9 +61,10 @@ router.get("/student-detail/:email", async (request, response) => {
 
 // endpoint to update teacher's detail except for password field
 router.put("/update-teacher/:id", async (request, response) => {
-  const { name, email, role, gender, qualification, department, description } = request.body;
+  const { name, email, role, gender, qualification, department, description } =
+    request.body;
   const id = request.params.id;
-  console.log(id, request.params)
+  console.log(id, request.params);
   const updatedData = {
     name,
     email,
@@ -75,70 +75,94 @@ router.put("/update-teacher/:id", async (request, response) => {
     qualification,
   };
   await Teacher.findByIdAndUpdate(id, updatedData, (error, updatedData) => {
-    if(error){
-      response.json({message: "Failed to update"})
+    if (error) {
+      response.json({ message: "Failed to update" });
+    } else {
+      console.log(updatedData);
+      response.json({ message: "Update successful" });
     }
-    else{
-      console.log(updatedData)
-      response.json({message: "Update successful"})
-    }
-  })
+  });
 });
 
 router.get("/student-detail-batch/:department", (request, response) => {
-    const department = request.params.department;
-    Student.find({department}).then((data) => {
-        response.json({data})
-    }).catch(error => {
-        console.log(error)
+  const department = request.params.department;
+  Student.find({ department })
+    .then((data) => {
+      response.json({ data });
     })
-})
+    .catch((error) => {
+      console.log(error);
+    });
+});
 
 router.post("/mark-attendence/:id", async (request, response) => {
-    const id = request.params.id;
-    const {leave, present} = request.body;
-    const date = Date.now()
-    console.log(date)
-    if (present && !leave){
-      const date = new Date()
-        Attendence.findOneAndUpdate({studentId: id}, {
-            $inc: {
-                daysAttended: 1
-            },
-            $push: { 
-                attendenceByDate: {
-                  "date" : date,
-                  "status" : "P"
-                  }  
-              } 
-        }).then(() => response.json({message: "updated successfully"}))
-    }
-    else if(leave && !present){
-      const date = new Date()
-        Attendence.findOneAndUpdate({studentId: id}, {
-            $inc: {
-                leave: 1
-            },
-            $push: { 
-                attendenceByDate: {
-                  "date" : date,
-                  "status" : "L"
-                  }  
-              } 
-        }).then(() => response.json({message: "updated successfully"}))
-    }
-    else{
-      const date = new Date()
-        Attendence.findOneAndUpdate({studentId: id}, {
-            $push: { 
-                attendenceByDate: {
-                  "date" : date,
-                  "status" : "A"
-                  }  
-              } 
-        }).then(() => response.json({message: "updated successfully"}))
-    }
-})
+  const id = request.params.id;
+  const { leave, present } = request.body;
+  const date = Date.now();
+  console.log(date);
+  if (present && !leave) {
+    const date = new Date();
+    Attendence.findOneAndUpdate(
+      { studentId: id },
+      {
+        $inc: {
+          daysAttended: 1,
+        },
+        $push: {
+          attendenceByDate: {
+            date: date,
+            status: "P",
+          },
+        },
+      }
+    ).then(() => response.json({ message: "updated successfully" }));
+  } else if (leave && !present) {
+    const date = new Date();
+    Attendence.findOneAndUpdate(
+      { studentId: id },
+      {
+        $inc: {
+          leave: 1,
+        },
+        $push: {
+          attendenceByDate: {
+            date: date,
+            status: "L",
+          },
+        },
+      }
+    ).then(() => response.json({ message: "updated successfully" }));
+  } else {
+    const date = new Date();
+    Attendence.findOneAndUpdate(
+      { studentId: id },
+      {
+        $push: {
+          attendenceByDate: {
+            date: date,
+            status: "A",
+          },
+        },
+      }
+    ).then(() => response.json({ message: "updated successfully" }));
+  }
+});
 
+router.put("/update-totaldays", async (request, response) => {
+  const { totalDays } = request.body;
+  Attendence.updateMany(
+    {},
+    { $set: { totalDays: totalDays } },
+    { multi: true },
+    function (error, properties) {
+      if(error){
+        response.json({message: "Something went wrong"})
+      }
+      else{
+        response.json({message: "Update Success"})
+      }
+    }
+  );
+});
 
 module.exports = router;

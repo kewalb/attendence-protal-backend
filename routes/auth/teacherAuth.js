@@ -53,7 +53,7 @@ const mailTransporter = nodemailer.createTransport({
 // endpoint for sign up functionality
 router.post("/signup", async (request, response) => {
   const { name, email, password, role, gender, qualification, department  } = request.body;
-  if (!name || !email || !password || !role || !gender || !qualification) {
+  if (!name || !email || !password || !role || !gender || !qualification || !department) {
     return response.json({ message: "Please fill in all the fields" });
   }
   Teacher.findOne({ email: email }).then((dbUser) => {
